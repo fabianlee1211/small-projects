@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <style>
+        body, .wrap { height: 100vh }
+        .wrap, #quote {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-content: center;
+            align-items: center;
+        }
+        #quote { height: 300px }
+        #quoteCat { font-weight: 200 }
+        #nextQuote { border-radius: 2rem }
+
+        .twitter { 
+            height: 2rem; 
+            width: 2rem;
+            fill: white;
+        }
+        .twitter:hover { 
+            fill:#26b5d9;
+            -webkit-transition: all 0.2s  ease-out;
+            transition: all 0.2s ease-out;
+        }
+
+        .animate {
+            animation-name: fadeIn;
+            animation-duration: 1s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+    <title>Random Quote</title>
+</head>
+<body class="bg-dark">
+    <div class="container">
+        <div class="row">
+            <div class="wrap col-md-12 mx-auto">
+                <div id="quote" class="text-white p-4">
+                    <h4 id="quoteCat"></h4>
+                    <h2 id="quoteText"></h2>
+                    <p id="quoteBy"></p>
+                </div>
+                <button id="nextQuote" type="button" class="btn btn-primary text-white btn-lg px-5 ">New Quote</button>
+                <a href="#" class="twitter d-block mt-3" title="Twitter"><svg viewBox="0 0 512 512"><path d="M419.6 168.6c-11.7 5.2-24.2 8.7-37.4 10.2 13.4-8.1 23.8-20.8 28.6-36 -12.6 7.5-26.5 12.9-41.3 15.8 -11.9-12.6-28.8-20.6-47.5-20.6 -42 0-72.9 39.2-63.4 79.9 -54.1-2.7-102.1-28.6-134.2-68 -17 29.2-8.8 67.5 20.1 86.9 -10.7-0.3-20.7-3.3-29.5-8.1 -0.7 30.2 20.9 58.4 52.2 64.6 -9.2 2.5-19.2 3.1-29.4 1.1 8.3 25.9 32.3 44.7 60.8 45.2 -27.4 21.4-61.8 31-96.4 27 28.8 18.5 63 29.2 99.8 29.2 120.8 0 189.1-102.1 185-193.6C399.9 193.1 410.9 181.7 419.6 168.6z"/></svg>
+            </div>
+        </div>
+    </div>
+    <script>
+        let quote = document.querySelector("#quote");
+        let quoteText = document.querySelector('#quoteText');
+        let quoteBy = document.querySelector('#quoteBy');
+        let quoteCat = document.querySelector("#quoteCat");
+        let nextQuote = document.querySelector('#nextQuote');
+        let tweet = document.querySelector(".twitter");
+        let author = "";
+
+        getQuoteFetch();
+        
+        nextQuote.addEventListener('click', getQuoteFetch);
+        tweet.addEventListener('click', shareTweet);
+
+        function getQuoteFetch() {
+            if(quote.classList.contains("animate")) quote.classList.remove("animate");
+            fetch('https://talaikis.com/api/quotes/random/')
+                .then(response => response.json())
+                .then(response => {
+                    quoteCat.innerHTML = (response.cat).charAt(0).toUpperCase() + (response.cat).slice(1);;
+                    quoteText.innerHTML = response.quote;
+                    author = response.author;
+                    quoteBy.innerHTML = "- " + response.author + " -";
+                    quote.classList.add("animate");
+                })
+                .catch(err => console.log(err));
+        }
+
+        function shareTweet() {
+            let url = "https://twitter.com/intent/tweet";
+            let text = '"'+ quoteText.innerHTML + '" ' + "- " + author;
+            let hashtags = quoteCat.innerHTML;
+            window.open(url+"?text="+text+";hashtags="+hashtags,"","width:600,height:500");
+        }
+    </script>
+</body>
+</html>
