@@ -1,1 +1,1 @@
-# small-projects
+# My Small Projects
